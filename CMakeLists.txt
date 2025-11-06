@@ -22,4 +22,6 @@ set(HEADERS
 
 )
 
-add_executable(pbd-x src/main.cpp)
+add_executable(pbd-x src/main.cpp
+        src/math/Vector2.h
+        src/math/Vector3.h)
