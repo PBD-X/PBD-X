@@ -21,8 +21,8 @@ public:
     void createCloth(float startx, float starty, int width, int height, float spacing);
     void createRope(float startx, float starty, int numPoints, float spacing);
 
-    const std::vector<PointMass*>& getPointMasses() const { return pointMasses; }
-    const std::vector<Spring*>& getSprings() const { return springs; }
+    [[nodiscard]] const std::vector<PointMass*>& getPointMasses() const { return pointMasses; }
+    [[nodiscard]] const std::vector<Spring*>& getSprings() const { return springs; }
 
     void clear();
     void applyGlobalForce(const Vector2D& force);

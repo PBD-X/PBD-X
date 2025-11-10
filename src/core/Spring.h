@@ -14,12 +14,12 @@ public:
 
     void applyForces();
 
-    PointMass* getPointMass1() const { return pointMass1; }
-    PointMass* getPointMass2() const { return pointMass2; }
-    float getRestLength() const { return restLength; }
-    float getStiffness() const { return stiffness; }
-    float getDamping() const { return damping; }
-    float getCurrentLength() const;
+    [[nodiscard]] PointMass* getPointMass1() const { return pointMass1; }
+    [[nodiscard]] PointMass* getPointMass2() const { return pointMass2; }
+    [[nodiscard]] float getRestLength() const { return restLength; }
+    [[nodiscard]] float getStiffness() const { return stiffness; }
+    [[nodiscard]] float getDamping() const { return damping; }
+    [[nodiscard]] float getCurrentLength() const;
 
 private:
     PointMass* pointMass1;

@@ -15,19 +15,19 @@ public:
     Vector2D(float x, float y) : x(x), y(y) {}
 
     Vector2D operator+(const Vector2D &other) const {
-        return Vector2D(x + other.x, y + other.y);
+        return {x + other.x, y + other.y};
     }
 
     Vector2D operator-(const Vector2D &other) const {
-        return Vector2D(x - other.x, y - other.y);
+        return {x - other.x, y - other.y};
     }
 
     Vector2D operator*(float scalar) const {
-        return Vector2D(x * scalar, y * scalar);
+        return {x * scalar, y * scalar};
     }
 
     Vector2D operator/(float scalar) const {
-        return Vector2D(x / scalar, y / scalar);
+        return {x / scalar, y / scalar};
     }
 
     Vector2D &operator+=(const Vector2D &other) {
@@ -54,17 +54,17 @@ public:
         return *this;
     }
 
-    float magnitude() const {
+    [[nodiscard]] float magnitude() const {
         return std::sqrt(x * x + y * y);
     }
 
-    Vector2D normalized() const {
+    [[nodiscard]] Vector2D normalized() const {
         float mag = magnitude();
-        if (mag > 0) return Vector2D(x/mag, y/mag);
-        return Vector2D(0, 0);
+        if (mag > 0) return {x/mag, y/mag};
+        return {0, 0};
     }
 
-    float dot(const Vector2D &other) const {
+    [[nodiscard]] float dot(const Vector2D &other) const {
         return x * other.x + y * other.y;
     }
 
