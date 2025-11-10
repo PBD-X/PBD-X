@@ -14,8 +14,8 @@ public:
     RopeObject(float startX, float startY, int numPoints, float spacing);
     ~RopeObject();
 
-    const std::vector<PointMass*>& getPointMasses() const { return pointMasses; }
-    const std::vector<Spring*>& getSprings() const { return springs; }
+    [[nodiscard]] const std::vector<PointMass*>& getPointMasses() const { return pointMasses; }
+    [[nodiscard]] const std::vector<Spring*>& getSprings() const { return springs; }
 
     void setStartFixed(bool fixed);
 

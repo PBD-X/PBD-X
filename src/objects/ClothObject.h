@@ -14,8 +14,8 @@ public:
     ClothObject(float startX, float startY, int width, int height, float spacing);
     ~ClothObject();
 
-    const std::vector<PointMass*>& getPointMasses() const { return pointMasses; }
-    const std::vector<Spring*>& getSprings() const { return springs; }
+    [[nodiscard]] const std::vector<PointMass*>& getPointMasses() const { return pointMasses; }
+    [[nodiscard]] const std::vector<Spring*>& getSprings() const { return springs; }
 
     void setCornersFixed(bool fixed);
     void applyWindForce(const Vector2D& force);

@@ -1,0 +1,9 @@
+{
+  "dependencies": [
+    "glm",
+    "glfw3",
+    "glad"
+  ],
+  "version": "1.0.0",
+  "name": "pbd-x"
+}
