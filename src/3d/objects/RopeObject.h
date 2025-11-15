@@ -1,7 +1,3 @@
-//
-// Created by Kevin Zheng on 11/9/2025.
-//
-
 #ifndef PBD_X_ROPEOBJECT_H
 #define PBD_X_ROPEOBJECT_H
 
@@ -11,7 +7,7 @@
 
 class RopeObject {
 public:
-    RopeObject(float startX, float startY, int numPoints, float spacing);
+    RopeObject(float startX, float startY, float startZ, int numPoints, float spacing);
     ~RopeObject();
 
     [[nodiscard]] const std::vector<PointMass*>& getPointMasses() const { return pointMasses; }

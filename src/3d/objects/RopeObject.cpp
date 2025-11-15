@@ -1,14 +1,10 @@
-//
-// Created by Kevin Zheng on 11/9/2025.
-//
-
 #include "RopeObject.h"
 
-RopeObject::RopeObject(float startX, float startY, int numPoints, float spacing) {
+RopeObject::RopeObject(float startX, float startY, float startZ, int numPoints, float spacing) {
     PointMass* prev = nullptr;
 
     for (int i = 0; i < numPoints; i++) {
-        PointMass* pm = new PointMass(1.0f, startX, startY + i * spacing);
+        PointMass* pm = new PointMass(1.0f, startX, startY + i * spacing, startZ);
 
         if (i == 0) {
             pm->setFixed(true);
@@ -38,4 +34,3 @@ void RopeObject::setStartFixed(bool fixed) {
         pointMasses[0]->setFixed(fixed);
     }
 }
-

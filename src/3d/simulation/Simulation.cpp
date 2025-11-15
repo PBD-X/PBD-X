@@ -1,7 +1,3 @@
-//
-// Created by Kevin Zheng on 11/9/2025.
-//
-
 #include "Simulation.h"
 #include <iostream>
 
@@ -30,12 +26,12 @@ void Simulation::addSpring(Spring* spring) {
     springs.push_back(spring);
 }
 
-void Simulation::createCloth(float startX, float startY, int width, int height, float spacing) {
+void Simulation::createCloth(float startX, float startY, float startZ, int width, int height, float spacing) {
     std::vector<std::vector<PointMass*>> grid(height, std::vector<PointMass*>(width));
 
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
-            PointMass* pm = new PointMass(1.0f, startX + x * spacing, startY + y * spacing);
+            PointMass* pm = new PointMass(1.0f, startX + x * spacing, startY + y * spacing, startZ);
 
             if (y == 0 && (x == 0 || x == width - 1)) {
                 pm->setFixed(true);
@@ -73,11 +69,11 @@ void Simulation::createCloth(float startX, float startY, int width, int height, 
     }
 }
 
-void Simulation::createRope(float startX, float startY, int numPoints, float spacing) {
+void Simulation::createRope(float startX, float startY, float startZ, int numPoints, float spacing) {
     PointMass* prev = nullptr;
 
     for (int i = 0; i < numPoints; i++) {
-        PointMass* pm = new PointMass(1.0f, startX, startY + i * spacing);
+        PointMass* pm = new PointMass(1.0f, startX, startY + i * spacing, startZ);
 
         if (i == 0) {
             pm->setFixed(true);
@@ -104,7 +100,7 @@ void Simulation::clear() {
     springs.clear();
 }
 
-void Simulation::applyGlobalForce(const Vector2D& force) {
+void Simulation::applyGlobalForce(const Vector3D& force) {
     for (PointMass* pm : pointMasses) {
         if (!pm->isFixed()) {
             pm->applyForce(force);

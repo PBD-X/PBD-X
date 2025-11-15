@@ -1,19 +1,19 @@
 #include <glad/glad.h>
-#include "OpenGLApplication.h"
+#include "OpenGLApplication2D.h"
 #include <GLFW/glfw3.h>
 #include <chrono>
 #include <iostream>
+#include <glm/glm.hpp>
 
-OpenGLApplication::OpenGLApplication(int width, int height) {
+OpenGLApplication2D::OpenGLApplication2D(int width, int height) {
     ctx = std::make_unique<GLFWContext>(width, height, "PBD-X 2D Simulation");
-    renderer = std::make_unique<OpenGLRenderer>(width, height);
+    renderer = std::make_unique<OpenGLRenderer2D>(width, height);
 
-    // Install scroll callback for zooming using the mouse wheel
     GLFWwindow* window = ctx->getWindow();
     if (window) {
         glfwSetWindowUserPointer(window, this);
         glfwSetScrollCallback(window, [](GLFWwindow* w, double xoffset, double yoffset) {
-            auto app = static_cast<OpenGLApplication*>(glfwGetWindowUserPointer(w));
+            auto app = static_cast<OpenGLApplication2D*>(glfwGetWindowUserPointer(w));
             if (!app) return;
             if (yoffset > 0) {
                 app->renderer->zoomCamera(app->cameraZoomFactor);
@@ -29,11 +29,11 @@ OpenGLApplication::OpenGLApplication(int width, int height) {
     lastTime = glfwGetTime();
 }
 
-OpenGLApplication::~OpenGLApplication() {
+OpenGLApplication2D::~OpenGLApplication2D() {
     GLFWContext::terminate();
 }
 
-void OpenGLApplication::processInput() {
+void OpenGLApplication2D::processInput() {
     GLFWwindow* window = ctx->getWindow();
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
@@ -46,7 +46,6 @@ void OpenGLApplication::processInput() {
     }
     spaceState = s;
 
-    // Toggle gravity (G)
     static int gState = GLFW_RELEASE;
     int g = glfwGetKey(window, GLFW_KEY_G);
     if (g == GLFW_PRESS && gState == GLFW_RELEASE) {
@@ -55,7 +54,6 @@ void OpenGLApplication::processInput() {
     }
     gState = g;
 
-    // Toggle wind (W)
     static int wState = GLFW_RELEASE;
     int w = glfwGetKey(window, GLFW_KEY_W);
     if (w == GLFW_PRESS && wState == GLFW_RELEASE) {
@@ -64,7 +62,6 @@ void OpenGLApplication::processInput() {
     }
     wState = w;
 
-    // Mouse dragging for camera pan (left mouse button)
     double mouseX, mouseY;
     glfwGetCursorPos(window, &mouseX, &mouseY);
     int leftButton = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
@@ -77,7 +74,6 @@ void OpenGLApplication::processInput() {
         } else {
             double dx = mouseX - lastMouseX;
             double dy = mouseY - lastMouseY;
-            // feed pixel delta to renderer which converts to world delta
             renderer->panCameraScreen(dx, dy);
             lastMouseX = mouseX;
             lastMouseY = mouseY;
@@ -86,7 +82,6 @@ void OpenGLApplication::processInput() {
         isDraggingCamera = false;
     }
 
-    // Zoom with Z (in) and X (out)
     static int zState = GLFW_RELEASE;
     int z = glfwGetKey(window, GLFW_KEY_Z);
     if (z == GLFW_PRESS && zState == GLFW_RELEASE) {
@@ -101,7 +96,6 @@ void OpenGLApplication::processInput() {
     }
     xState = x;
 
-    // Adjust simulation speed with [ and ] keys (edge-detected)
     static int decState = GLFW_RELEASE;
     int dec = glfwGetKey(window, GLFW_KEY_LEFT_BRACKET);
     if (dec == GLFW_PRESS && decState == GLFW_RELEASE) {
@@ -117,15 +111,27 @@ void OpenGLApplication::processInput() {
         std::cout << "Simulation speed: " << simulationSpeed << std::endl;
     }
     incState = inc;
+
+    static int vState = GLFW_RELEASE;
+    int v = glfwGetKey(window, GLFW_KEY_V);
+    if (v == GLFW_PRESS && vState == GLFW_RELEASE) {
+        showGrid = !showGrid;
+        std::cout << "Grid: " << (showGrid ? "ON" : "OFF") << std::endl;
+    }
+    vState = v;
 }
 
-void OpenGLApplication::render() {
+void OpenGLApplication2D::render() {
     int w, h;
     glfwGetFramebufferSize(ctx->getWindow(), &w, &h);
     renderer->setViewportSize(w, h);
 
     glClearColor(0.12f, 0.12f, 0.14f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    if (showGrid) {
+        renderer->drawGrid(gridSpacing, glm::vec3(1.0f, 1.0f, 1.0f));
+    }
 
     const auto& springs = sim.getSprings();
     std::vector<float> linePositions;
@@ -172,7 +178,7 @@ void OpenGLApplication::render() {
     renderer->drawPoints(pointPositions, {0.2f, 0.7f, 0.9f}, 6.0f);
 }
 
-int OpenGLApplication::run() {
+int OpenGLApplication2D::run() {
     GLFWwindow* window = ctx->getWindow();
 
     while (!ctx->shouldClose()) {
