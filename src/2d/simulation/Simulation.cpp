@@ -13,12 +13,50 @@ Simulation::~Simulation() {
 }
 
 void Simulation::update(float dt) {
-    for (Spring* spring : springs) {
-        spring->applyForces();
-    }
+    // Sub-stepping to improve collision stability and bound impulses
+    const float maxSubDt = 0.005f; // 5 ms max per internal step
+    int steps = std::max(1, (int)std::ceil(dt / maxSubDt));
+    float subDt = dt / steps;
+    const float maxSpeed = 30.0f; // hard cap on speed (m/s) to avoid explosions
 
-    for (PointMass* pm : pointMasses) {
-        pm->update(dt);
+    for (int s = 0; s < steps; ++s) {
+        for (Spring* spring : springs) {
+            spring->applyForces();
+        }
+
+        for (PointMass* pm : pointMasses) {
+            pm->update(subDt);
+
+            if (floorEnabled && !pm->isFixed()) {
+                auto pos = pm->getPosition();
+                if (pos.y < floorY) {
+                    // move slightly above floor to avoid penetration-driven spring explosions
+                    pos.y = floorY + 1e-4f;
+                    pm->setPosition(pos);
+                    auto vel = pm->getVelocity();
+                    vel.y = -vel.y * restitution;
+                    // simple friction on horizontal
+                    vel.x *= 0.9f;
+                    // clamp speed
+                    float speed = std::sqrt(vel.x*vel.x + vel.y*vel.y);
+                    if (speed > maxSpeed) {
+                        float sc = maxSpeed / speed;
+                        vel.x *= sc; vel.y *= sc;
+                    }
+                    pm->setVelocity(vel);
+                }
+            }
+
+            // Safety: prevent extremely large per-step displacement caused by sudden impulses
+            auto vel = pm->getVelocity();
+            float speed = std::sqrt(vel.x*vel.x + vel.y*vel.y);
+            float maxDisp = maxSpeed * subDt * 1.5f; // allow some leeway
+            if (speed * subDt > maxDisp && speed > 1e-6f) {
+                float scale = (maxDisp / (speed * subDt));
+                vel.x *= scale; vel.y *= scale;
+                pm->setVelocity(vel);
+            }
+        }
     }
 }
 

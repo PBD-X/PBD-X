@@ -20,6 +20,8 @@ public:
     void panCamera(float dx, float dy);
     void zoomCamera(float factor);
     void panCameraScreen(double dxPixels, double dyPixels);
+    // Save the current framebuffer to a PPM image file. Returns true on success.
+    bool saveFrameAsPPM(const std::string& path);
 
 private:
     void ensureLineBuffers();

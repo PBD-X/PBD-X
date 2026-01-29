@@ -11,6 +11,9 @@ public:
     ~Simulation();
 
     void update(float dt);
+    void setFloorEnabled(bool enabled) { floorEnabled = enabled; }
+    void setFloorY(float y) { floorY = y; }
+    void setRestitution(float r) { restitution = r; }
     void addPointMass(PointMass* pointMass);
     void addSpring(Spring* spring);
 
@@ -26,6 +29,9 @@ public:
 private:
     std::vector<PointMass*> pointMasses;
     std::vector<Spring*> springs;
+    bool floorEnabled{true};
+    float floorY{-1.0f};
+    float restitution{0.6f};
 };
 
 

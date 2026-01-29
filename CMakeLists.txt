@@ -43,16 +43,21 @@ if(BUILD_MODE STREQUAL "2D")
     message(STATUS "Building 2D Simulation")
     set(SOURCES src/main_2d.cpp ${2D_SOURCES})
     set(INCLUDE_DIRS src/2d/core src/2d/simulation src/2d/objects src/2d/utils src/2d/gui)
+    set(TEST_SOURCES src/tests/TestRunner2D.cpp)
 elseif(BUILD_MODE STREQUAL "3D")
     message(STATUS "Building 3D Simulation")
     set(SOURCES src/main_3d.cpp ${3D_SOURCES})
     set(INCLUDE_DIRS src/3d/core src/3d/simulation src/3d/objects src/3d/utils src/3d/gui)
+    set(TEST_SOURCES src/tests/TestRunner3D.cpp)
 else()
     message(FATAL_ERROR "BUILD_MODE must be 2D or 3D")
 endif()
 
 include_directories(${INCLUDE_DIRS})
 
-add_executable(pbd-x ${SOURCES})
+# common utilities
+list(APPEND SOURCES src/common/CSVLogger.cpp)
+
+add_executable(pbd-x ${SOURCES} ${TEST_SOURCES})
 
 target_link_libraries(pbd-x PRIVATE glm::glm glfw glad::glad)

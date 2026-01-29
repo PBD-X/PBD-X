@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <fstream>
 #include <cmath>
 
 static const char* vertexSrc = R"(
@@ -32,6 +33,32 @@ void main() {
     }
 }
 )";
+
+bool OpenGLRenderer3D::saveFrameAsPPM(const std::string& path) {
+    if (viewportWidth <= 0 || viewportHeight <= 0) return false;
+    int w = viewportWidth;
+    int h = viewportHeight;
+    std::vector<unsigned char> pixels(w * h * 4);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+
+    std::ofstream out(path, std::ios::binary);
+    if (!out) return false;
+    out << "P6\n" << w << " " << h << "\n255\n";
+    for (int y = h - 1; y >= 0; --y) {
+        for (int x = 0; x < w; ++x) {
+            size_t idx = (y * w + x) * 4;
+            unsigned char r = pixels[idx + 0];
+            unsigned char g = pixels[idx + 1];
+            unsigned char b = pixels[idx + 2];
+            out.put((char)r);
+            out.put((char)g);
+            out.put((char)b);
+        }
+    }
+    out.close();
+    return true;
+}
 
 OpenGLRenderer3D::OpenGLRenderer3D(int width, int height)
     : viewportWidth(width), viewportHeight(height) {

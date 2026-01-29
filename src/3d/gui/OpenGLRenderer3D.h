@@ -24,6 +24,8 @@ public:
     void rotateCameraY(float angle);
     void panCamera(float dx, float dy, float dz);
     void zoomCamera(float factor);
+    // Save the current framebuffer to a PPM image file. Returns true on success.
+    bool saveFrameAsPPM(const std::string& path);
 
 private:
     void ensureLineBuffers();
